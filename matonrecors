@@ -1,9 +1,2 @@
-# Estructura inicial de carpetas
-matonecors/
-├── .github/
-│   └── workflows/    # Para automatizaciones
-├── docs/             # Carpeta para GitHub Pages
-├── src/              # Código fuente
-│   ├── main.py       # Script principal
-│   └── requirements.txt
-└── README.md
+git clone https://github.com/matonfaz/matonecors.git
+cd matonecors
