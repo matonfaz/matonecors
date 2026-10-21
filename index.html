@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Matón Recors — POS & Control Financiero</title>
+  
+  <!-- FAVICON: Logotipo en la pestaña del navegador y celular -->
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="apple-touch-icon" href="logo.png" />
+
   <!-- TailwindCSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- SheetJS (xlsx) CDN -->
@@ -42,13 +47,12 @@
 </head>
 <body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-black">
 
-  <!-- BARRA SUPERIOR / HEADER -->
+  <!-- BARRA SUPERIOR / HEADER CON LOGOTIPO -->
   <header class="sticky top-0 z-30 bg-zinc-950/95 backdrop-blur border-b border-zinc-800 px-3 py-2.5">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
       <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-lg bg-amber-500 flex items-center justify-center text-black font-black text-lg shadow">
-          MR
-        </div>
+        <!-- LOGOTIPO EN EL HEADER (Asegúrate de tener logo.png en tu repo) -->
+        <img src="logo.png" alt="Matón Recors Logo" class="w-10 h-10 rounded-full object-cover border border-amber-500/50 shadow" />
         <div>
           <h1 class="text-base sm:text-lg font-extrabold tracking-tight leading-none text-white">MATÓN RECORS</h1>
           <p id="status-indicator" class="text-[11px] text-zinc-400 font-medium mt-0.5">Sin archivo cargado • Esperando .xlsx</p>
@@ -76,7 +80,7 @@
           💾 .XLSX
         </button>
 
-        <button onclick="limpiarMemoriaLocal()" title="Borrar caché" class="bg-zinc-900 hover:bg-red-950 text-zinc-400 hover:text-red-400 text-xs px-2 py-2 rounded-lg border border-zinc-800 transition">
+        <button onclick="limpiarMemoriaLocal()" title="Borrar caché" class="bg-zinc-900 hover:bg-red-950 text-zinc-400 hover:text-red-400 text-xs py-2 rounded-lg border border-zinc-800 transition">
           🗑️
         </button>
       </div>
