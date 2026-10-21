@@ -29,7 +29,6 @@
       color: #fafafa;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-    /* Scrollbars limpias */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #09090b; }
     ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
@@ -56,16 +55,23 @@
         </div>
       </div>
 
-      <!-- Botones de Archivo (Cargar Excel / Exportar Excel / Respaldo JSON) -->
+      <!-- Botones de Control y Sincronización -->
       <div class="flex items-center gap-1.5 sm:gap-2">
         <label class="cursor-pointer bg-zinc-800 hover:bg-zinc-700 text-zinc-100 text-xs font-bold px-3 py-2 rounded-lg border border-zinc-700 transition flex items-center gap-1.5">
           <span>📂 Cargar Excel</span>
           <input type="file" id="excel-upload" accept=".xlsx,.xls" class="hidden" />
         </label>
-        <button onclick="exportarExcelActualizado()" class="bg-amber-500 hover:bg-amber-400 text-black text-xs font-extrabold px-3 py-2 rounded-lg shadow transition flex items-center gap-1">
-          <span>💾 Descargar .XLSX</span>
+        
+        <!-- BOTÓN NUEVO: Copiar ventas nuevas al portapapeles para Google Sheets -->
+        <button onclick="copiarVentasNuevasPortapapeles()" class="bg-emerald-600 hover:bg-emerald-500 text-black text-xs font-extrabold px-3 py-2 rounded-lg shadow transition flex items-center gap-1">
+          <span>📋 Copiar Ventas Hoy</span>
         </button>
-        <button onclick="limpiarMemoriaLocal()" title="Borrar caché del navegador" class="bg-zinc-900 hover:bg-red-950 text-zinc-400 hover:text-red-400 text-xs px-2.5 py-2 rounded-lg border border-zinc-800 transition">
+
+        <button onclick="exportarExcelActualizado()" title="Respaldo completo" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold px-2.5 py-2 rounded-lg border border-zinc-700 transition">
+          💾 .XLSX
+        </button>
+
+        <button onclick="limpiarMemoriaLocal()" title="Borrar caché" class="bg-zinc-900 hover:bg-red-950 text-zinc-400 hover:text-red-400 text-xs px-2.5 py-2 rounded-lg border border-zinc-800 transition">
           🗑️
         </button>
       </div>
@@ -197,16 +203,15 @@
               </div>
             </div>
 
-            <!-- Campo especial que se activa cuando el dueño es Z (Zero Records) o tiene costo unitario -->
+            <!-- Campo especial Zero Records -->
             <div id="pos-box-costo-zero" class="hidden bg-amber-950/30 border border-amber-700/60 rounded-lg p-3">
-              <label class="block text-xs font-bold text-amber-300 mb-1">Costo Base Pactado Zero Records ($) o Costo Unitario</label>
+              <label class="block text-xs font-bold text-amber-300 mb-1">Costo Base Pactado Zero Records ($)</label>
               <input type="number" step="0.01" id="pos-costo-base" value="0" oninput="recalcularPreviewPOS()" placeholder="Ej. 150" class="w-full bg-zinc-900 border border-amber-600 rounded-lg px-3 py-1.5 text-sm text-white font-bold" />
-              <p class="text-[11px] text-amber-200/80 mt-1">En esquema Zero (Z), el dueño recibe su Costo Base íntegro y Matón Recors conserva el excedente neto.</p>
             </div>
 
             <div>
               <label class="block text-xs font-bold text-zinc-400 mb-1">Notas / Referencia (Opcional)</label>
-              <input type="text" id="pos-notas" placeholder="Ej. Pronto pago, cliente frecuente, Z-005..." class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:border-amber-500 focus:outline-none" />
+              <input type="text" id="pos-notas" placeholder="Ej. Pronto pago, cliente frecuente..." class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:border-amber-500 focus:outline-none" />
             </div>
 
             <!-- Panel de Cálculo en Vivo -->
@@ -235,7 +240,7 @@
           </form>
         </div>
 
-        <!-- Tabla de Ventas Recientes / Jornada Actual -->
+        <!-- Tabla de Ventas Recientes -->
         <div class="lg:col-span-7 bg-card border border-borderdark rounded-xl p-4 shadow-lg flex flex-col">
           <div class="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800 pb-3 mb-3">
             <div>
@@ -271,10 +276,9 @@
     </section>
 
     <!-- ==========================================
-         PESTAÑA 2: 📊 DASHBOARD DIARIO Y MENSUAL
+         PESTAÑA 2: 📊 DASHBOARD
          ========================================== -->
     <section id="view-dashboard" class="hidden space-y-6">
-      <!-- Barra de Filtro de Fecha / Mes -->
       <div class="bg-card border border-borderdark rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 class="text-base font-extrabold text-amber-400">Corte Financiero y Gastos de Bazar</h2>
@@ -316,10 +320,9 @@
         </div>
       </div>
 
-      <!-- Registro de Gastos Operativos por Jornada + Tabla Resumen Mensual -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <div class="lg:col-span-4 bg-card border border-borderdark rounded-xl p-4 space-y-3">
-          <h3 class="text-sm font-extrabold text-amber-400 border-b border-zinc-800 pb-2">⛺ Registrar / Editar Gasto de Stand (Por Fecha)</h3>
+          <h3 class="text-sm font-extrabold text-amber-400 border-b border-zinc-800 pb-2">⛺ Registrar Gasto de Stand</h3>
           <form onsubmit="guardarGastoDiario(event)" class="space-y-3 text-xs">
             <div>
               <label class="block text-zinc-400 font-bold mb-1">Fecha de Jornada</label>
@@ -327,20 +330,20 @@
             </div>
             <div class="grid grid-cols-3 gap-2">
               <div>
-                <label class="block text-zinc-400 font-bold mb-1">Renta Stand ($)</label>
+                <label class="block text-zinc-400 font-bold mb-1">Renta ($)</label>
                 <input type="number" step="0.01" id="gasto-renta" value="160" required class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-2 text-white font-bold" />
               </div>
               <div>
-                <label class="block text-zinc-400 font-bold mb-1">Apoyo Juan ($)</label>
+                <label class="block text-zinc-400 font-bold mb-1">Apoyo ($)</label>
                 <input type="number" step="0.01" id="gasto-apoyo" value="0" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-2 text-white" />
               </div>
               <div>
-                <label class="block text-zinc-400 font-bold mb-1">Estac./Otros ($)</label>
+                <label class="block text-zinc-400 font-bold mb-1">Otros ($)</label>
                 <input type="number" step="0.01" id="gasto-otros" value="0" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-2 text-white" />
               </div>
             </div>
             <button type="submit" class="w-full bg-zinc-800 hover:bg-amber-500 hover:text-black text-white font-extrabold py-2.5 rounded-lg border border-zinc-700 transition">
-              Guardar Gasto de Jornada
+              Guardar Gasto
             </button>
           </form>
 
@@ -362,7 +365,6 @@
           </div>
         </div>
 
-        <!-- Tabla de Estado Financiero Mensual -->
         <div class="lg:col-span-8 bg-card border border-borderdark rounded-xl p-4">
           <h3 class="text-sm font-extrabold text-white border-b border-zinc-800 pb-2 mb-3">📈 Estado Financiero Mensual Consolidado</h3>
           <div class="overflow-x-auto">
@@ -387,7 +389,7 @@
     </section>
 
     <!-- ==========================================
-         PESTAÑA 3: 🤝 LIQUIDACIÓN DE CONSIGNAS
+         PESTAÑA 3: 🤝 LIQUIDACIONES
          ========================================== -->
     <section id="view-liquidaciones" class="hidden space-y-5">
       <div class="bg-card border border-borderdark rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
@@ -409,7 +411,7 @@
             <option value="TC">TC — Tony Caro (70%)</option>
           </select>
           <button onclick="marcarTodosPagadosConsignador()" class="bg-emerald-600 hover:bg-emerald-500 text-black font-extrabold text-xs px-3 py-2 rounded-lg transition">
-            ✔ Liquidar Pendientes de este Socio
+            ✔ Liquidar Pendientes
           </button>
         </div>
       </div>
@@ -420,15 +422,15 @@
           <p id="liq-kpi-items" class="text-xl font-black text-white mt-1 font-mono">0</p>
         </div>
         <div class="bg-card border border-borderdark rounded-xl p-3.5">
-          <p class="text-[11px] text-zinc-400 font-bold uppercase">Total Correspondiente Socio</p>
+          <p class="text-[11px] text-zinc-400 font-bold uppercase">Total Socio</p>
           <p id="liq-kpi-total" class="text-xl font-black text-sky-400 mt-1 font-mono">$0.00</p>
         </div>
         <div class="bg-card border border-borderdark rounded-xl p-3.5">
-          <p class="text-[11px] text-zinc-400 font-bold uppercase">Ya Liquidado / Pagado</p>
+          <p class="text-[11px] text-zinc-400 font-bold uppercase">Ya Pagado</p>
           <p id="liq-kpi-pagado" class="text-xl font-black text-emerald-400 mt-1 font-mono">$0.00</p>
         </div>
         <div class="bg-amber-950/30 border border-amber-600/60 rounded-xl p-3.5">
-          <p class="text-[11px] text-amber-300 font-bold uppercase">Saldo Pendiente por Pagar</p>
+          <p class="text-[11px] text-amber-300 font-bold uppercase">Saldo Pendiente</p>
           <p id="liq-kpi-pendiente" class="text-xl font-black text-amber-400 mt-1 font-mono">$0.00</p>
         </div>
       </div>
@@ -446,7 +448,7 @@
               <th class="p-2.5 text-right">Com. CLIP</th>
               <th class="p-2.5 text-right">Pago Dueño $</th>
               <th class="p-2.5 text-right">Matón $</th>
-              <th class="p-2.5 text-center">Estatus Liquidación</th>
+              <th class="p-2.5 text-center">Estatus</th>
             </tr>
           </thead>
           <tbody id="tabla-liquidaciones" class="divide-y divide-zinc-800"></tbody>
@@ -468,18 +470,18 @@
           <p id="clip-kpi-bruto" class="text-xl font-black text-white mt-1 font-mono">$0.00</p>
         </div>
         <div class="bg-card border border-borderdark rounded-xl p-3.5">
-          <p class="text-[11px] text-zinc-400 font-bold uppercase">Comisión Retenida (4.06%)</p>
+          <p class="text-[11px] text-zinc-400 font-bold uppercase">Comisión (4.06%)</p>
           <p id="clip-kpi-com" class="text-xl font-black text-red-400 mt-1 font-mono">-$0.00</p>
         </div>
         <div class="bg-emerald-950/30 border border-emerald-700/60 rounded-xl p-3.5">
-          <p class="text-[11px] text-emerald-300 font-bold uppercase">Depósito Neto Esperado</p>
+          <p class="text-[11px] text-emerald-300 font-bold uppercase">Depósito Esperado</p>
           <p id="clip-kpi-neto" class="text-xl font-black text-emerald-400 mt-1 font-mono">$0.00</p>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <div class="lg:col-span-6 bg-card border border-borderdark rounded-xl p-4">
-          <h3 class="text-sm font-extrabold text-amber-400 border-b border-zinc-800 pb-2 mb-3">📅 Conciliación de Depósitos CLIP por Fecha</h3>
+          <h3 class="text-sm font-extrabold text-amber-400 border-b border-zinc-800 pb-2 mb-3">📅 Conciliación por Fecha</h3>
           <div class="overflow-x-auto max-h-[480px]">
             <table class="w-full text-left text-xs">
               <thead class="bg-zinc-900 text-zinc-400 sticky top-0">
@@ -487,8 +489,8 @@
                   <th class="p-2">Fecha</th>
                   <th class="p-2 text-right">Cobros</th>
                   <th class="p-2 text-right">Bruto CLIP</th>
-                  <th class="p-2 text-right">Retención 4.06%</th>
-                  <th class="p-2 text-right text-emerald-400">Depósito Esperado</th>
+                  <th class="p-2 text-right">Retención</th>
+                  <th class="p-2 text-right text-emerald-400">Neto Esperado</th>
                 </tr>
               </thead>
               <tbody id="tabla-clip-fechas" class="divide-y divide-zinc-800"></tbody>
@@ -497,7 +499,7 @@
         </div>
 
         <div class="lg:col-span-6 bg-card border border-borderdark rounded-xl p-4">
-          <h3 class="text-sm font-extrabold text-white border-b border-zinc-800 pb-2 mb-3">🔎 Detalle Individual de Transacciones con Tarjeta</h3>
+          <h3 class="text-sm font-extrabold text-white border-b border-zinc-800 pb-2 mb-3">🔎 Detalle Individual</h3>
           <div class="overflow-x-auto max-h-[480px]">
             <table class="w-full text-left text-xs">
               <thead class="bg-zinc-900 text-zinc-400 sticky top-0">
@@ -507,7 +509,7 @@
                   <th class="p-2">Disco</th>
                   <th class="p-2">Dueño</th>
                   <th class="p-2 text-right">Bruto</th>
-                  <th class="p-2 text-right">Com. 4.06%</th>
+                  <th class="p-2 text-right">Comisión</th>
                   <th class="p-2 text-right">Neto</th>
                 </tr>
               </thead>
@@ -524,13 +526,13 @@
     <section id="view-catalogo" class="hidden space-y-5">
       <div class="bg-card border border-borderdark rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 class="text-base font-extrabold text-amber-400">Buscador Maestro de Catálogo (CDs Drive + Consignas Zero)</h2>
-          <p class="text-xs text-zinc-400">Consulta precios, enlaces a fotos de Drive y envía cualquier disco directo al Punto de Venta</p>
+          <h2 class="text-base font-extrabold text-amber-400">Buscador Maestro de Catálogo</h2>
+          <p class="text-xs text-zinc-400">Consulta precios, enlaces a fotos de Drive y envía discos directo al POS</p>
         </div>
         <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-          <input type="text" id="cat-busqueda" oninput="renderizarCatalogo()" placeholder="Buscar artista, álbum o código Z..." class="flex-1 sm:w-64 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-white focus:border-amber-500 focus:outline-none" />
+          <input type="text" id="cat-busqueda" oninput="renderizarCatalogo()" placeholder="Buscar artista, álbum..." class="flex-1 sm:w-64 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-white focus:border-amber-500 focus:outline-none" />
           <select id="cat-filtro-origen" onchange="renderizarCatalogo()" class="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-white font-bold">
-            <option value="ALL">Todos (CDs + Zero LPs)</option>
+            <option value="ALL">Todos (CDs + LPs Zero)</option>
             <option value="CDS">💿 Catálogo CDs (Drive)</option>
             <option value="ZERO">🔥 Consignas Zero (LPs)</option>
           </select>
@@ -558,13 +560,9 @@
 
   </main>
 
-  <!-- SCRIPT PRINCIPAL CON TODA LA LÓGICA DE NEGOCIO -->
+  <!-- SCRIPT PRINCIPAL -->
   <script>
-    /*************************************************************************
-     * 1. REGLAS DE NEGOCIO Y DICCIONARIO DE COMISIONES DE MATÓN RECORS
-     *************************************************************************/
-    const TASA_CLIP = 0.0406; // 4.06% (3.5% + IVA)
-
+    const TASA_CLIP = 0.0406;
     const ESQUEMA_DUENOS = {
       "MR":    { nombre: "Matón Recors",             comisionDueno: 0.00 },
       "P":     { nombre: "Pollo",                    comisionDueno: 1.00 },
@@ -586,18 +584,14 @@
 
     const STORAGE_KEY = "MATON_RECORS_APP_STATE_V1";
 
-    // Estado Maestro en Memoria
     let appState = {
-      ventas: [],         // Hoja: Registro_Ventas
-      gastosDiarios: {},  // Hoja: Resumen_Diario -> { "YYYY-MM-DD": { renta: 160, apoyo: 0, otros: 0 } }
-      consignasZero: [],  // Hoja: Consignas_Zero
-      catalogoCDs: [],    // Hoja: Catalogo_CDs
+      ventas: [],
+      gastosDiarios: {},
+      consignasZero: [],
+      catalogoCDs: [],
       ultimaActualizacion: null
     };
 
-    /*************************************************************************
-     * 2. INICIALIZACIÓN Y PERSISTENCIA EN LOCALSTORAGE
-     *************************************************************************/
     window.addEventListener("DOMContentLoaded", () => {
       const hoy = new Date().toISOString().split("T")[0];
       document.getElementById("pos-fecha").value = hoy;
@@ -627,7 +621,7 @@
     }
 
     function limpiarMemoriaLocal() {
-      if (!confirm("¿Seguro que deseas borrar la memoria del navegador? Asegúrate de haber descargado antes tu archivo .XLSX actualizado.")) return;
+      if (!confirm("¿Borrar caché del navegador? Asegúrate de haber copiado tus ventas nuevas.")) return;
       localStorage.removeItem(STORAGE_KEY);
       location.reload();
     }
@@ -637,15 +631,13 @@
       const totalVentas = appState.ventas.length;
       const totalCDs = appState.catalogoCDs.length;
       if (totalVentas > 0 || totalCDs > 0) {
-        el.innerHTML = `<span class="text-emerald-400 font-bold">● Memoria Activa:</span> ${totalVentas} ventas • ${totalCDs} CDs • ${appState.consignasZero.length} LPs Zero`;
+        el.innerHTML = `<span class="text-emerald-400 font-bold">● Memoria Activa:</span> ${totalVentas} ventas • ${totalCDs} CDs`;
       } else {
-        el.textContent = "Sin datos cargados • Sube tu archivo Control de Ventas y Consignas .xlsx";
+        el.textContent = "Sin datos cargados • Sube tu archivo .xlsx maestro";
       }
     }
 
-    /*************************************************************************
-     * 3. LECTOR DE ARCHIVO EXCEL (.XLSX) CON SHEETJS
-     *************************************************************************/
+    // Lector de Excel
     document.getElementById("excel-upload").addEventListener("change", function (e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -665,9 +657,7 @@
         return valor.toISOString().split("T")[0];
       }
       const str = String(valor).trim();
-      // Formato YYYY-MM-DD
       if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.substring(0, 10);
-      // Formato DD-MM-YYYY o DD/MM/YYYY
       const matchDMY = str.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
       if (matchDMY) {
         return `${matchDMY[3]}-${matchDMY[2].padStart(2, "0")}-${matchDMY[1].padStart(2, "0")}`;
@@ -686,11 +676,9 @@
     }
 
     function procesarWorkbookExcel(workbook) {
-      // 1. Procesar Registro_Ventas
       if (workbook.Sheets["Registro_Ventas"]) {
         const rows = XLSX.utils.sheet_to_json(workbook.Sheets["Registro_Ventas"], { header: 1, defval: "" });
         const nuevasVentas = [];
-        // Buscamos la fila de encabezado donde la columna 0 sea "ID"
         let startIdx = 2;
         for (let i = 0; i < Math.min(rows.length, 10); i++) {
           if (String(rows[i][0]).trim().toUpperCase() === "ID") {
@@ -731,7 +719,6 @@
         appState.ventas = nuevasVentas;
       }
 
-      // 2. Procesar Resumen_Diario (para recuperar Renta de Stand, Apoyo Juan y Otros Gastos)
       if (workbook.Sheets["Resumen_Diario"]) {
         const rows = XLSX.utils.sheet_to_json(workbook.Sheets["Resumen_Diario"], { header: 1, defval: "" });
         const gastos = {};
@@ -749,7 +736,6 @@
         appState.gastosDiarios = gastos;
       }
 
-      // 3. Procesar Consignas_Zero
       if (workbook.Sheets["Consignas_Zero"]) {
         const rows = XLSX.utils.sheet_to_json(workbook.Sheets["Consignas_Zero"], { header: 1, defval: "" });
         const zeroList = [];
@@ -774,7 +760,6 @@
         appState.consignasZero = zeroList;
       }
 
-      // 4. Procesar Catalogo_CDs (extrayendo tanto texto como hipervínculo si existe)
       if (workbook.Sheets["Catalogo_CDs"]) {
         const ws = workbook.Sheets["Catalogo_CDs"];
         const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
@@ -782,7 +767,6 @@
         for (let i = 1; i < rows.length; i++) {
           const r = rows[i];
           if (!r || (!r[0] && !r[1])) continue;
-          // Intentar extraer URL de la fórmula HYPERLINK si existe en la celda D
           const cellAddress = XLSX.utils.encode_cell({ r: i, c: 3 });
           const cellObj = ws[cellAddress];
           let linkUrl = "";
@@ -807,30 +791,20 @@
 
       guardarEnLocalStorage();
       refrescarTodaLaUI();
-      alert(`¡Archivo Excel cargado con éxito!\n• ${appState.ventas.length} ventas históricas\n• ${appState.catalogoCDs.length} CDs en catálogo\n• ${appState.consignasZero.length} discos de Zero Records`);
+      alert(`¡Excel cargado!\n• ${appState.ventas.length} ventas\n• ${appState.catalogoCDs.length} CDs\n• ${appState.consignasZero.length} LPs Zero`);
     }
 
-    /*************************************************************************
-     * 4. MOTOR MATEMÁTICO DE CÁLCULO DE VENTA (CLIP 4.06% + REPARTO DUEÑOS)
-     *************************************************************************/
+    // Matemáticas POS
     function calcularFinanzasVenta({ precio, metodo, envio, dueno, costoBase }) {
       const pVenta = limpiarNumero(precio);
       const cEnvio = limpiarNumero(envio);
       const cBase = limpiarNumero(costoBase);
       const mPago = String(metodo || "efe").toLowerCase();
 
-      // Si es cortesía o promo, todo es 0
       if (mPago.includes("cortes") || mPago.includes("promo")) {
-        return {
-          comClip: 0,
-          ingresoNeto: 0,
-          comDuenoPct: 0,
-          gananciaDueno: 0,
-          gananciaMaton: 0
-        };
+        return { comClip: 0, ingresoNeto: 0, comDuenoPct: 0, gananciaDueno: 0, gananciaMaton: 0 };
       }
 
-      // Comisión CLIP 4.06% sobre el total cobrado
       const comClip = mPago === "clip" ? +(pVenta * TASA_CLIP).toFixed(2) : 0;
       const ingresoNeto = +(pVenta - comClip - cEnvio).toFixed(2);
 
@@ -839,14 +813,12 @@
       let comDuenoPct = 0;
 
       if (dueno === "Z") {
-        // Esquema especial Zero Records: Dueño recibe Costo Base Pactado, Matón el resto del ingreso neto
         gananciaDueno = cBase > 0 ? cBase : +(pVenta * 0.60).toFixed(2);
         gananciaMaton = +(ingresoNeto - gananciaDueno).toFixed(2);
         comDuenoPct = pVenta > 0 ? +(gananciaDueno / pVenta).toFixed(4) : 0;
       } else {
         const regla = ESQUEMA_DUENOS[dueno] || { comisionDueno: 0 };
         comDuenoPct = regla.comisionDueno;
-        // El reparto se calcula sobre el ingreso neto tras comisión de terminal
         gananciaDueno = +(ingresoNeto * comDuenoPct).toFixed(2);
         gananciaMaton = +(ingresoNeto - gananciaDueno).toFixed(2);
       }
@@ -861,29 +833,20 @@
       const envio = document.getElementById("pos-envio").value;
       const costoBase = document.getElementById("pos-costo-base").value;
 
-      // Mostrar u ocultar caja de Costo Base si es Zero Records (Z)
       const boxZero = document.getElementById("pos-box-costo-zero");
-      if (dueno === "Z") {
-        boxZero.classList.remove("hidden");
-      } else {
-        boxZero.classList.add("hidden");
-      }
+      if (dueno === "Z") boxZero.classList.remove("hidden");
+      else boxZero.classList.add("hidden");
 
       const res = calcularFinanzasVenta({ precio, metodo, envio, dueno, costoBase });
 
       document.getElementById("preview-clip").textContent = `-$${res.comClip.toFixed(2)}`;
       document.getElementById("preview-neto").textContent = `$${res.ingresoNeto.toFixed(2)}`;
       document.getElementById("preview-label-dueno").textContent =
-        dueno === "Z"
-          ? `Pago a Zero (Costo Base):`
-          : `Pago a ${dueno} (${Math.round(res.comDuenoPct * 100)}%):`;
+        dueno === "Z" ? `Pago a Zero (Costo Base):` : `Pago a ${dueno} (${Math.round(res.comDuenoPct * 100)}%):`;
       document.getElementById("preview-dueno").textContent = `$${res.gananciaDueno.toFixed(2)}`;
       document.getElementById("preview-maton").textContent = `$${res.gananciaMaton.toFixed(2)}`;
     }
 
-    /*************************************************************************
-     * 5. REGISTRO DE NUEVA VENTA Y AUTOCOMPLETADO DESDE CATÁLOGO
-     *************************************************************************/
     function filtrarSugerenciasPOS(query) {
       const contenedor = document.getElementById("pos-sugerencias");
       const q = String(query || "").trim().toLowerCase();
@@ -894,17 +857,11 @@
       }
 
       const resultados = [];
-
-      // Buscar en Consignas Zero disponibles
       appState.consignasZero.forEach(item => {
-        if (
-          item.artista.toLowerCase().includes(q) ||
-          item.titulo.toLowerCase().includes(q) ||
-          item.idRef.toLowerCase().includes(q)
-        ) {
+        if (item.artista.toLowerCase().includes(q) || item.titulo.toLowerCase().includes(q) || item.idRef.toLowerCase().includes(q)) {
           resultados.push({
             tipo: "ZERO",
-            etiqueta: `[${item.idRef}] ${item.artista} — ${item.titulo} (LP • PVP $${item.pvp} / Base $${item.costoBase})`,
+            etiqueta: `[${item.idRef}] ${item.artista} — ${item.titulo} (PVP $${item.pvp})`,
             artista: item.artista,
             titulo: item.titulo,
             formato: item.formato || "LP",
@@ -916,7 +873,6 @@
         }
       });
 
-      // Buscar en Catálogo de CDs
       appState.catalogoCDs.forEach(cd => {
         if (cd.artista.toLowerCase().includes(q) || cd.titulo.toLowerCase().includes(q)) {
           resultados.push({
@@ -938,7 +894,7 @@
         return;
       }
 
-      contenedor.innerHTML = resultados.slice(0, 8).map((r, idx) => `
+      contenedor.innerHTML = resultados.slice(0, 8).map(r => `
         <div onclick='aplicarSugerenciaPOS(${JSON.stringify(r).replace(/'/g, "&#39;")})' class="p-2 hover:bg-zinc-800 cursor-pointer flex justify-between items-center">
           <span class="truncate text-zinc-200">${r.etiqueta}</span>
           <span class="text-[10px] bg-amber-500 text-black font-bold px-1.5 py-0.5 rounded ml-2">Usar</span>
@@ -1004,7 +960,6 @@
 
       appState.ventas.push(nuevaVenta);
 
-      // Si es un disco de Zero Records, marcarlo como Vendido en Consignas_Zero
       if (dueno === "Z") {
         const matchZero = appState.consignasZero.find(
           z => z.artista.toLowerCase() === artista.toLowerCase() && z.titulo.toLowerCase() === titulo.toLowerCase()
@@ -1012,14 +967,13 @@
         if (matchZero) {
           matchZero.status = "Vendido";
           matchZero.fechaVenta = fecha;
-          matchZero.notas = `Vendido en ${lugar} (ID ${nuevoId}) • Pago ${metodo}`;
+          matchZero.notas = `Vendido en ${lugar} (ID ${nuevoId})`;
         }
       }
 
       guardarEnLocalStorage();
       refrescarTodaLaUI();
 
-      // Limpiar campos del disco manteniendo fecha y lugar para captura en ráfaga
       document.getElementById("pos-artista").value = "";
       document.getElementById("pos-titulo").value = "";
       document.getElementById("pos-precio").value = "";
@@ -1031,15 +985,59 @@
     }
 
     function eliminarVenta(id) {
-      if (!confirm(`¿Eliminar el registro de venta ID #${id}?`)) return;
+      if (!confirm(`¿Eliminar venta ID #${id}?`)) return;
       appState.ventas = appState.ventas.filter(v => v.id !== id);
       guardarEnLocalStorage();
       refrescarTodaLaUI();
     }
 
-    /*************************************************************************
-     * 6. RENDERIZADO DE LAS 5 VISTAS DE LA APLICACIÓN
-     *************************************************************************/
+    // NUEVA FUNCIÓN: Copiar ventas nuevas al portapapeles con formato Excel
+    function copiarVentasNuevasPortapapeles() {
+      // Tomamos por ejemplo las ventas del día de hoy o las últimas registradas
+      const fechaHoy = document.getElementById("pos-fecha").value || new Date().toISOString().split("T")[0];
+      const ventasHoy = appState.ventas.filter(v => v.fecha === fechaHoy);
+
+      if (ventasHoy.length === 0) {
+        alert(`No hay ventas registradas con fecha de hoy (${fechaHoy}). Revisa la fecha en el POS.`);
+        return;
+      }
+
+      // Generar filas tabuladas (exactamente como columnas de Excel)
+      // Columnas: ID, Fecha, Lugar, Formato, Artista, Título, Dueño, Precio, Método, Envío, Com CLIP, Ingreso Neto, Com Dueño %, Ganancia Dueño, Ganancia Matón, Costo, Margen Bruto, Margen %, Status, Notas, Año
+      const lineas = ventasHoy.map(v => [
+        v.id,
+        v.fecha,
+        v.lugar,
+        v.formato,
+        v.artista,
+        v.titulo,
+        v.dueno,
+        v.precio,
+        v.metodo,
+        v.envio || "",
+        v.comClip,
+        v.ingresoNeto,
+        v.comDuenoPct,
+        v.gananciaDueno,
+        v.gananciaMaton,
+        v.costoUnitario || "",
+        v.gananciaMaton,
+        v.precio > 0 ? +(v.gananciaMaton / v.precio).toFixed(4) : 0,
+        v.statusPago || "",
+        v.notas || "",
+        v.anio
+      ].join("\t")); // Separado por tabuladores para pegado perfecto en Sheets
+
+      const textoClipboard = lineas.join("\n");
+
+      navigator.clipboard.writeText(textoClipboard).then(() => {
+        alert(`¡Listo! Se copiaron ${ventasHoy.length} ventas del día (${fechaHoy}) al portapapeles.\n\nVe a tu Google Sheets en el celular, selecciona la celda vacía al final de tu tabla y presiona "Pegar".`);
+      }).catch(err => {
+        console.error("Error al copiar:", err);
+        alert("No se pudo acceder al portapapeles. Usa el respaldo .XLSX si tu navegador bloquea el portapapeles.");
+      });
+    }
+
     function refrescarTodaLaUI() {
       const nextId = appState.ventas.reduce((max, v) => Math.max(max, v.id || 0), 0) + 1;
       document.getElementById("pos-next-id").textContent = `ID #${nextId}`;
@@ -1052,27 +1050,16 @@
       renderizarCatalogo();
     }
 
-    // 6.1 Tabla POS
     function renderizarTablaVentasPOS() {
       const tbody = document.getElementById("tabla-ventas-pos");
       const q = (document.getElementById("filtro-ventas-texto").value || "").toLowerCase();
 
       const filtradas = appState.ventas
-        .filter(v => {
-          if (!q) return true;
-          return (
-            v.artista.toLowerCase().includes(q) ||
-            v.titulo.toLowerCase().includes(q) ||
-            v.dueno.toLowerCase().includes(q) ||
-            String(v.id).includes(q)
-          );
-        })
-        .slice()
-        .sort((a, b) => b.id - a.id)
-        .slice(0, 60);
+        .filter(v => !q || v.artista.toLowerCase().includes(q) || v.titulo.toLowerCase().includes(q) || v.dueno.toLowerCase().includes(q) || String(v.id).includes(q))
+        .slice().sort((a, b) => b.id - a.id).slice(0, 60);
 
       if (filtradas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-zinc-500">No hay ventas para mostrar. Sube tu archivo Excel o registra una venta.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-zinc-500">No hay ventas registradas.</td></tr>`;
         return;
       }
 
@@ -1086,19 +1073,14 @@
           </td>
           <td class="p-2"><span class="bg-zinc-800 px-2 py-0.5 rounded font-bold text-zinc-200">${v.dueno}</span></td>
           <td class="p-2 text-right font-mono font-bold text-white">$${v.precio.toFixed(2)}</td>
-          <td class="p-2">
-            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${v.metodo === 'clip' ? 'bg-sky-950 text-sky-300 border border-sky-700' : 'bg-zinc-800 text-zinc-300'}">${v.metodo}</span>
-          </td>
+          <td class="p-2"><span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-zinc-800 text-zinc-300">${v.metodo}</span></td>
           <td class="p-2 text-right font-mono text-sky-400">$${v.gananciaDueno.toFixed(2)}</td>
           <td class="p-2 text-right font-mono font-bold text-emerald-400">$${v.gananciaMaton.toFixed(2)}</td>
-          <td class="p-2 text-center">
-            <button onclick="eliminarVenta(${v.id})" class="text-zinc-500 hover:text-red-400 px-1">✕</button>
-          </td>
+          <td class="p-2 text-center"><button onclick="eliminarVenta(${v.id})" class="text-zinc-500 hover:text-red-400 px-1">✕</button></td>
         </tr>
       `).join("");
     }
 
-    // 6.2 Dashboard Diario y Mensual
     function actualizarSelectorFechasDashboard() {
       const sel = document.getElementById("dash-filtro-fecha");
       const valorActual = sel.value || "ALL";
@@ -1126,9 +1108,7 @@
 
     function renderizarDashboard() {
       const filtroFecha = document.getElementById("dash-filtro-fecha").value;
-      const ventasFiltradas = filtroFecha === "ALL"
-        ? appState.ventas
-        : appState.ventas.filter(v => v.fecha === filtroFecha);
+      const ventasFiltradas = filtroFecha === "ALL" ? appState.ventas : appState.ventas.filter(v => v.fecha === filtroFecha);
 
       let bruta = 0, clip = 0, duenos = 0, gananciaBrutaMaton = 0;
       ventasFiltradas.forEach(v => {
@@ -1140,9 +1120,7 @@
 
       let gastosBazar = 0;
       if (filtroFecha === "ALL") {
-        Object.values(appState.gastosDiarios).forEach(g => {
-          gastosBazar += (g.renta - g.apoyo) + g.otros;
-        });
+        Object.values(appState.gastosDiarios).forEach(g => { gastosBazar += (g.renta - g.apoyo) + g.otros; });
       } else {
         const g = appState.gastosDiarios[filtroFecha] || { renta: 0, apoyo: 0, otros: 0 };
         gastosBazar = (g.renta - g.apoyo) + g.otros;
@@ -1150,14 +1128,13 @@
 
       const netaMaton = gananciaBrutaMaton - gastosBazar;
 
-      document.getElementById("kpi-bruta").textContent = `$${bruta.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-      document.getElementById("kpi-items").textContent = `${ventasFiltradas.length} artículos vendidos`;
-      document.getElementById("kpi-clip").textContent = `-$${clip.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-      document.getElementById("kpi-duenos").textContent = `$${duenos.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-      document.getElementById("kpi-gastos").textContent = `-$${gastosBazar.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-      document.getElementById("kpi-neta-maton").textContent = `$${netaMaton.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById("kpi-bruta").textContent = `$${bruta.toLocaleString("es-MX", { minimumFractionDigits: 2 })}`;
+      document.getElementById("kpi-items").textContent = `${ventasFiltradas.length} artículos`;
+      document.getElementById("kpi-clip").textContent = `-$${clip.toLocaleString("es-MX", { minimumFractionDigits: 2 })}`;
+      document.getElementById("kpi-duenos").textContent = `$${duenos.toLocaleString("es-MX", { minimumFractionDigits: 2 })}`;
+      document.getElementById("kpi-gastos").textContent = `-$${gastosBazar.toLocaleString("es-MX", { minimumFractionDigits: 2 })}`;
+      document.getElementById("kpi-neta-maton").textContent = `$${netaMaton.toLocaleString("es-MX", { minimumFractionDigits: 2 })}`;
 
-      // Tabla Resumen Diario
       const mapaFechas = {};
       appState.ventas.forEach(v => {
         if (!v.fecha) return;
@@ -1175,7 +1152,7 @@
         const utilidadNeta = m.maton - gastoNeto;
         return `
           <tr>
-            <td class="py-1.5 font-mono text-zinc-300">${f} <span class="text-zinc-500">(${m.items})</span></td>
+            <td class="py-1.5 font-mono text-zinc-300">${f} (${m.items})</td>
             <td class="py-1.5 text-right font-mono">$${m.bruto.toFixed(0)}</td>
             <td class="py-1.5 text-right font-mono text-orange-400">-$${gastoNeto.toFixed(0)}</td>
             <td class="py-1.5 text-right font-mono font-bold ${utilidadNeta >= 0 ? 'text-emerald-400' : 'text-red-400'}">$${utilidadNeta.toFixed(2)}</td>
@@ -1183,10 +1160,8 @@
         `;
       }).join("");
 
-      // Tabla Resumen Mensual (12 meses)
       const resumenMes = Array.from({ length: 12 }, (_, i) => ({
-        mesNombre: NOMBRES_MESES[i],
-        items: 0, bruta: 0, clip: 0, neto: 0, gastos: 0, duenos: 0, matonBruto: 0
+        mesNombre: NOMBRES_MESES[i], items: 0, bruta: 0, clip: 0, neto: 0, gastos: 0, duenos: 0, matonBruto: 0
       }));
 
       appState.ventas.forEach(v => {
@@ -1204,23 +1179,14 @@
 
       Object.entries(appState.gastosDiarios).forEach(([fecha, g]) => {
         const mesIdx = parseInt(fecha.substring(5, 7), 10) - 1;
-        if (mesIdx >= 0 && mesIdx < 12) {
-          resumenMes[mesIdx].gastos += (g.renta - g.apoyo) + g.otros;
-        }
+        if (mesIdx >= 0 && mesIdx < 12) resumenMes[mesIdx].gastos += (g.renta - g.apoyo) + g.otros;
       });
 
       let totItems = 0, totBruta = 0, totClip = 0, totNeto = 0, totGastos = 0, totDuenos = 0, totNetaMR = 0;
-
-      const filasMesHTML = resumenMes.map(m => {
+      document.getElementById("tabla-resumen-mensual").innerHTML = resumenMes.map(m => {
         const gananciaNetaMes = m.matonBruto - m.gastos;
-        totItems += m.items;
-        totBruta += m.bruta;
-        totClip += m.clip;
-        totNeto += m.neto;
-        totGastos += m.gastos;
-        totDuenos += m.duenos;
-        totNetaMR += gananciaNetaMes;
-
+        totItems += m.items; totBruta += m.bruta; totClip += m.clip; totNeto += m.neto;
+        totGastos += m.gastos; totDuenos += m.duenos; totNetaMR += gananciaNetaMes;
         return `
           <tr class="${m.items === 0 ? 'opacity-40' : 'hover:bg-zinc-900/60'}">
             <td class="p-2 font-bold text-white">${m.mesNombre}</td>
@@ -1233,11 +1199,9 @@
             <td class="p-2 text-right font-mono font-extrabold text-emerald-400">$${gananciaNetaMes.toFixed(2)}</td>
           </tr>
         `;
-      }).join("");
-
-      const filaTotalHTML = `
+      }).join("") + `
         <tr class="bg-zinc-900 font-black text-white border-t-2 border-amber-500">
-          <td class="p-2.5 text-amber-400">TOTAL ANUAL</td>
+          <td class="p-2.5 text-amber-400">TOTAL</td>
           <td class="p-2.5 text-right font-mono">${totItems}</td>
           <td class="p-2.5 text-right font-mono">$${totBruta.toFixed(2)}</td>
           <td class="p-2.5 text-right font-mono text-red-400">$${totClip.toFixed(2)}</td>
@@ -1247,24 +1211,16 @@
           <td class="p-2.5 text-right font-mono text-emerald-400">$${totNetaMR.toFixed(2)}</td>
         </tr>
       `;
-
-      document.getElementById("tabla-resumen-mensual").innerHTML = filasMesHTML + filaTotalHTML;
     }
 
-    // 6.3 Liquidaciones de Consignas
     function renderizarLiquidaciones() {
       const socio = document.getElementById("liq-selector-dueno").value;
       const lista = appState.ventas.filter(v => v.dueno === socio).sort((a, b) => b.id - a.id);
-
       let totalSocio = 0, pagado = 0, pendiente = 0;
       lista.forEach(v => {
         totalSocio += v.gananciaDueno;
-        const esPagado = v.statusPago && !v.statusPago.toLowerCase().includes("pendiente");
-        if (esPagado) {
-          pagado += v.gananciaDueno;
-        } else {
-          pendiente += v.gananciaDueno;
-        }
+        if (v.statusPago && !v.statusPago.toLowerCase().includes("pendiente")) pagado += v.gananciaDueno;
+        else pendiente += v.gananciaDueno;
       });
 
       document.getElementById("liq-kpi-items").textContent = lista.length;
@@ -1274,7 +1230,7 @@
 
       const tbody = document.getElementById("tabla-liquidaciones");
       if (lista.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-zinc-500">Sin ventas registradas para este consignador.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-zinc-500">Sin ventas para este consignador.</td></tr>`;
         return;
       }
 
@@ -1284,7 +1240,7 @@
           <tr class="hover:bg-zinc-900/60">
             <td class="p-2 font-mono text-zinc-400">#${v.id}</td>
             <td class="p-2 font-mono">${v.fecha}</td>
-            <td class="p-2 font-bold text-white">${v.artista} — <span class="font-normal text-zinc-300">${v.titulo}</span></td>
+            <td class="p-2 font-bold text-white">${v.artista} — ${v.titulo}</td>
             <td class="p-2 text-amber-400 font-bold">${v.formato}</td>
             <td class="p-2 text-right font-mono">$${v.precio.toFixed(2)}</td>
             <td class="p-2 uppercase font-mono text-zinc-400">${v.metodo}</td>
@@ -1292,12 +1248,8 @@
             <td class="p-2 text-right font-mono font-bold text-sky-400">$${v.gananciaDueno.toFixed(2)}</td>
             <td class="p-2 text-right font-mono text-emerald-400">$${v.gananciaMaton.toFixed(2)}</td>
             <td class="p-2 text-center">
-              <button onclick="alternarStatusPagoVenta(${v.id})" class="px-2.5 py-1 rounded-md text-[11px] font-extrabold transition ${
-                esPagado
-                  ? 'bg-emerald-950 text-emerald-300 border border-emerald-700'
-                  : 'bg-amber-500 text-black hover:bg-amber-400'
-              }">
-                ${esPagado ? '✔ ' + v.statusPago : '⏳ Pendiente (Liquidar)'}
+              <button onclick="alternarStatusPagoVenta(${v.id})" class="px-2.5 py-1 rounded-md text-[11px] font-extrabold ${esPagado ? 'bg-emerald-950 text-emerald-300 border border-emerald-700' : 'bg-amber-500 text-black'}">
+                ${esPagado ? '✔ ' + v.statusPago : '⏳ Pendiente'}
               </button>
             </td>
           </tr>
@@ -1306,47 +1258,34 @@
     }
 
     function alternarStatusPagoVenta(id) {
-      const venta = appState.ventas.find(v => v.id === id);
-      if (!venta) return;
-      const esPagado = venta.statusPago && !venta.statusPago.toLowerCase().includes("pendiente");
-      if (esPagado) {
-        venta.statusPago = "Pendiente";
-      } else {
-        const hoy = new Date().toISOString().split("T")[0];
-        venta.statusPago = `Pagado (${hoy})`;
-      }
+      const v = appState.ventas.find(item => item.id === id);
+      if (!v) return;
+      const esPagado = v.statusPago && !v.statusPago.toLowerCase().includes("pendiente");
+      v.statusPago = esPagado ? "Pendiente" : `Pagado (${new Date().toISOString().split("T")[0]})`;
       guardarEnLocalStorage();
       renderizarLiquidaciones();
     }
 
     function marcarTodosPagadosConsignador() {
       const socio = document.getElementById("liq-selector-dueno").value;
-      const refCorte = prompt(`Ingresa etiqueta de liquidación para ${socio} (ej. Corte Viernes):`, `Pagado ${new Date().toISOString().split("T")[0]}`);
+      const refCorte = prompt(`Etiqueta de pago para ${socio}:`, `Pagado ${new Date().toISOString().split("T")[0]}`);
       if (!refCorte) return;
-
       appState.ventas.forEach(v => {
-        if (v.dueno === socio && (!v.statusPago || v.statusPago.toLowerCase().includes("pendiente"))) {
-          v.statusPago = refCorte;
-        }
+        if (v.dueno === socio && (!v.statusPago || v.statusPago.toLowerCase().includes("pendiente"))) v.statusPago = refCorte;
       });
       guardarEnLocalStorage();
       renderizarLiquidaciones();
     }
 
-    // 6.4 Auditoría CLIP
     function renderizarAuditoriaCLIP() {
       const cobrosClip = appState.ventas.filter(v => String(v.metodo).toLowerCase() === "clip");
-
       let totalBruto = 0, totalCom = 0, totalNeto = 0;
       const porFecha = {};
 
       cobrosClip.forEach(v => {
         const com = v.comClip || +(v.precio * TASA_CLIP).toFixed(2);
         const neto = +(v.precio - com).toFixed(2);
-        totalBruto += v.precio;
-        totalCom += com;
-        totalNeto += neto;
-
+        totalBruto += v.precio; totalCom += com; totalNeto += neto;
         if (!porFecha[v.fecha]) porFecha[v.fecha] = { tx: 0, bruto: 0, com: 0, neto: 0 };
         porFecha[v.fecha].tx += 1;
         porFecha[v.fecha].bruto += v.precio;
@@ -1359,8 +1298,7 @@
       document.getElementById("clip-kpi-com").textContent = `-$${totalCom.toFixed(2)}`;
       document.getElementById("clip-kpi-neto").textContent = `$${totalNeto.toFixed(2)}`;
 
-      const fechasOrdenadas = Object.keys(porFecha).sort().reverse();
-      document.getElementById("tabla-clip-fechas").innerHTML = fechasOrdenadas.map(f => {
+      document.getElementById("tabla-clip-fechas").innerHTML = Object.keys(porFecha).sort().reverse().map(f => {
         const d = porFecha[f];
         return `
           <tr class="hover:bg-zinc-900/60">
@@ -1380,7 +1318,7 @@
           <tr class="hover:bg-zinc-900/60">
             <td class="p-2 font-mono text-zinc-400">#${v.id}</td>
             <td class="p-2 font-mono">${v.fecha}</td>
-            <td class="p-2"><span class="font-bold text-white">${v.artista}</span> — ${v.titulo}</td>
+            <td class="p-2 font-bold text-white">${v.artista} — ${v.titulo}</td>
             <td class="p-2 font-bold text-amber-400">${v.dueno}</td>
             <td class="p-2 text-right font-mono">$${v.precio.toFixed(2)}</td>
             <td class="p-2 text-right font-mono text-red-400">-$${com.toFixed(2)}</td>
@@ -1390,7 +1328,6 @@
       }).join("");
     }
 
-    // 6.5 Inventario / Catálogo Unificado
     function renderizarCatalogo() {
       const q = (document.getElementById("cat-busqueda").value || "").toLowerCase().trim();
       const origen = document.getElementById("cat-filtro-origen").value;
@@ -1398,12 +1335,7 @@
 
       if (origen === "ALL" || origen === "ZERO") {
         appState.consignasZero.forEach(z => {
-          if (
-            !q ||
-            z.artista.toLowerCase().includes(q) ||
-            z.titulo.toLowerCase().includes(q) ||
-            z.idRef.toLowerCase().includes(q)
-          ) {
+          if (!q || z.artista.toLowerCase().includes(q) || z.titulo.toLowerCase().includes(q) || z.idRef.toLowerCase().includes(q)) {
             items.push({
               origenBadge: `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded font-mono font-bold">${z.idRef}</span>`,
               artista: z.artista,
@@ -1412,15 +1344,7 @@
               costoBase: `$${z.costoBase.toFixed(0)}`,
               precioLista: `$${z.pvp.toFixed(0)}`,
               extraHTML: `<span class="px-2 py-0.5 rounded text-[10px] font-bold ${z.status.toLowerCase().includes('vendido') ? 'bg-red-950 text-red-300' : 'bg-emerald-950 text-emerald-300'}">${z.status}</span>`,
-              payloadPOS: {
-                artista: z.artista,
-                titulo: z.titulo,
-                formato: z.formato || "LP",
-                dueno: "Z",
-                precio: z.pvp,
-                costoBase: z.costoBase,
-                notas: `Ref ${z.idRef}`
-              }
+              payloadPOS: { artista: z.artista, titulo: z.titulo, formato: z.formato || "LP", dueno: "Z", precio: z.pvp, costoBase: z.costoBase, notas: `Ref ${z.idRef}` }
             });
           }
         });
@@ -1433,33 +1357,17 @@
               origenBadge: `<span class="bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded font-mono">CD-${idx + 1}</span>`,
               artista: cd.artista,
               titulo: cd.titulo,
-              formatoEstado: "CD • Catálogo Drive",
+              formatoEstado: "CD • Drive",
               costoBase: "—",
-              precioLista: cd.precio ? `$${cd.precio.toFixed(0)}` : `<span class="text-zinc-500">Sin asignar</span>`,
-              extraHTML: cd.enlace
-                ? `<a href="${cd.enlace}" target="_blank" class="text-sky-400 hover:underline font-bold">📷 Ver Foto</a>`
-                : `<span class="text-zinc-500">Ver en Drive</span>`,
-              payloadPOS: {
-                artista: cd.artista,
-                titulo: cd.titulo,
-                formato: "CD",
-                dueno: "MR",
-                precio: cd.precio || "",
-                costoBase: 0,
-                notas: ""
-              }
+              precioLista: cd.precio ? `$${cd.precio.toFixed(0)}` : "—",
+              extraHTML: cd.enlace ? `<a href="${cd.enlace}" target="_blank" class="text-sky-400 hover:underline font-bold">📷 Foto</a>` : "—",
+              payloadPOS: { artista: cd.artista, titulo: cd.titulo, formato: "CD", dueno: "MR", precio: cd.precio || "", costoBase: 0, notas: "" }
             });
           }
         });
       }
 
-      const tbody = document.getElementById("tabla-catalogo");
-      if (items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-zinc-500">No se encontraron discos con ese criterio.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = items.map(it => `
+      document.getElementById("tabla-catalogo").innerHTML = items.map(it => `
         <tr class="hover:bg-zinc-900/60">
           <td class="p-2.5">${it.origenBadge}</td>
           <td class="p-2.5 font-bold text-white">${it.artista}</td>
@@ -1469,9 +1377,7 @@
           <td class="p-2.5 text-right font-mono font-bold text-emerald-400">${it.precioLista}</td>
           <td class="p-2.5 text-center">${it.extraHTML}</td>
           <td class="p-2.5 text-center">
-            <button onclick='enviarDiscoAlPOS(${JSON.stringify(it.payloadPOS).replace(/'/g, "&#39;")})' class="bg-amber-500 hover:bg-amber-400 text-black font-extrabold px-2.5 py-1 rounded text-[11px] transition">
-              ⚡ Vender
-            </button>
+            <button onclick='enviarDiscoAlPOS(${JSON.stringify(it.payloadPOS).replace(/'/g, "&#39;")})' class="bg-amber-500 hover:bg-amber-400 text-black font-extrabold px-2.5 py-1 rounded text-[11px]">⚡ Vender</button>
           </td>
         </tr>
       `).join("");
@@ -1483,64 +1389,17 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    /*************************************************************************
-     * 7. EXPORTADOR DEL EXCEL MAESTRO ACTUALIZADO (.XLSX)
-     *************************************************************************/
     function exportarExcelActualizado() {
-      if (appState.ventas.length === 0 && appState.catalogoCDs.length === 0) {
-        alert("Primero carga tu archivo Excel o registra ventas antes de exportar.");
-        return;
-      }
-
+      // Respaldo completo opcional por si acaso
       const wb = XLSX.utils.book_new();
-
-      // 1. Hoja Registro_Ventas
-      const headerVentas = [
-        ["🎵 MATÓN RECORS — REGISTRO DE VENTAS"],
-        ["ID", "Fecha", "Lugar", "Formato", "Artista", "Título", "Dueño\n(inic.)", "Precio\nVenta", "Método\nPago", "Envío $\n(Matón)", "Com.\nCLIP $", "Ingreso\nNeto", "Com.\nDueño %", "Ganancia\nDueño $", "Ganancia\nMatón $", "Costo\nUnitario $", "Margen\nBruto $", "Margen\n%", "Status\nPago", "Notas", "Año"]
+      const filasVentas = [
+        ["ID", "Fecha", "Lugar", "Formato", "Artista", "Título", "Dueño", "Precio", "Método", "Envío", "Com CLIP", "Ingreso Neto", "Com Dueño %", "Ganancia Dueño", "Ganancia Matón", "Costo", "Margen Bruto", "Margen %", "Status", "Notas", "Año"],
+        ...appState.ventas.map(v => [v.id, v.fecha, v.lugar, v.formato, v.artista, v.titulo, v.dueno, v.precio, v.metodo, v.envio, v.comClip, v.ingresoNeto, v.comDuenoPct, v.gananciaDueno, v.gananciaMaton, v.costoUnitario, v.gananciaMaton, v.precio > 0 ? v.gananciaMaton/v.precio : 0, v.statusPago, v.notas, v.anio])
       ];
-      const filasVentas = appState.ventas.slice().sort((a, b) => a.id - b.id).map(v => [
-        v.id, v.fecha, v.lugar, v.formato, v.artista, v.titulo, v.dueno,
-        v.precio, v.metodo, v.envio || "", v.comClip, v.ingresoNeto,
-        v.comDuenoPct, v.gananciaDueno, v.gananciaMaton, v.costoUnitario || "",
-        v.gananciaMaton, v.precio > 0 ? +(v.gananciaMaton / v.precio).toFixed(4) : 0,
-        v.statusPago || "", v.notas || "", v.anio
-      ]);
-      const wsVentas = XLSX.utils.aoa_to_sheet([...headerVentas, ...filasVentas]);
-      XLSX.utils.book_append_sheet(wb, wsVentas, "Registro_Ventas");
-
-      // 2. Hoja Dueños
-      const filasDuenos = [
-        ["Iniciales", "Nombre", "Comisión (Dueño %)"],
-        ...Object.entries(ESQUEMA_DUENOS).map(([inic, d]) => [inic, d.nombre, d.comisionDueno])
-      ];
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(filasDuenos), "Dueños");
-
-      // 3. Hoja Catalogo_CDs
-      const filasCDs = [
-        ["Artista", "Título", "Precio", "Enlace de Drive"],
-        ...appState.catalogoCDs.map(c => [c.artista, c.titulo, c.precio || "", c.enlace || "Ver Foto"])
-      ];
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(filasCDs), "Catalogo_CDs");
-
-      // 4. Hoja Consignas_Zero
-      const filasZero = [
-        ["", "🎵 MATÓN RECORDS — CONTROL DE INVENTARIO Y CONSIGNAS: ZERO RECORDS (Z)"],
-        ["", "ID Ref", "Artista", "Título del Álbum", "Formato", "Edición / Año", "Estado (Disco/Tapa)", "Costo Base Zero $", "Precio Venta (PVP) $", "Ganancia Matón $", "Margen Matón %", "Status Venta", "Fecha Venta", "Notas / Ubicación"],
-        ...appState.consignasZero.map(z => [
-          "", z.idRef, z.artista, z.titulo, z.formato, z.edicion, z.estado,
-          z.costoBase, z.pvp, z.pvp - z.costoBase,
-          z.pvp > 0 ? +((z.pvp - z.costoBase) / z.pvp).toFixed(4) : 0,
-          z.status, z.fechaVenta, z.notas
-        ])
-      ];
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(filasZero), "Consignas_Zero");
-
-      const fechaDescarga = new Date().toISOString().split("T")[0];
-      XLSX.writeFile(wb, `Control_Ventas_Maton_Recors_${fechaDescarga}.xlsx`);
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(filasVentas), "Registro_Ventas");
+      XLSX.writeFile(wb, `Respaldo_Maton_${new Date().toISOString().split("T")[0]}.xlsx`);
     }
 
-    // Cambio de Pestañas SPA
     function cambiarTab(tabId) {
       ["pos", "dashboard", "liquidaciones", "clip", "catalogo"].forEach(id => {
         document.getElementById(`view-${id}`).classList.toggle("hidden", id !== tabId);
