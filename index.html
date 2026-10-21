@@ -1459,7 +1459,7 @@
         return;
       }
 
-      tbody.innerHTML = items.slice(0, 120).map(it => `
+      tbody.innerHTML = items.map(it => `
         <tr class="hover:bg-zinc-900/60">
           <td class="p-2.5">${it.origenBadge}</td>
           <td class="p-2.5 font-bold text-white">${it.artista}</td>
