@@ -6,7 +6,7 @@
   <title>Matón Recors — POS & Control Financiero</title>
   <!-- TailwindCSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- SheetJS (xlsx) CDN para leer y exportar el archivo Excel con sus 9 hojas -->
+  <!-- SheetJS (xlsx) CDN -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <script>
     tailwind.config = {
@@ -55,23 +55,28 @@
         </div>
       </div>
 
-      <!-- Botones de Control y Sincronización -->
+      <!-- Botones de Control y Sincronización Rápida -->
       <div class="flex items-center gap-1.5 sm:gap-2">
         <label class="cursor-pointer bg-zinc-800 hover:bg-zinc-700 text-zinc-100 text-xs font-bold px-3 py-2 rounded-lg border border-zinc-700 transition flex items-center gap-1.5">
           <span>📂 Cargar Excel</span>
           <input type="file" id="excel-upload" accept=".xlsx,.xls" class="hidden" />
         </label>
         
-        <!-- BOTÓN NUEVO: Copiar ventas nuevas al portapapeles para Google Sheets -->
-        <button onclick="copiarVentasNuevasPortapapeles()" class="bg-emerald-600 hover:bg-emerald-500 text-black text-xs font-extrabold px-3 py-2 rounded-lg shadow transition flex items-center gap-1">
-          <span>📋 Copiar Ventas Hoy</span>
+        <!-- Copiar ventas de hoy al portapapeles -->
+        <button onclick="copiarVentasNuevasPortapapeles()" class="bg-emerald-600 hover:bg-emerald-500 text-black text-xs font-extrabold px-2.5 py-2 rounded-lg shadow transition flex items-center gap-1" title="Copiar filas para Google Sheets">
+          <span>📋 Copiar Hoy</span>
         </button>
 
-        <button onclick="exportarExcelActualizado()" title="Respaldo completo" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold px-2.5 py-2 rounded-lg border border-zinc-700 transition">
+        <!-- Descargar Excel solo con las ventas de hoy -->
+        <button onclick="descargarExcelVentasHoy()" class="bg-sky-600 hover:bg-sky-500 text-black text-xs font-extrabold px-2.5 py-2 rounded-lg shadow transition flex items-center gap-1" title="Descargar .xlsx de la jornada">
+          <span>📥 Descargar Hoy</span>
+        </button>
+
+        <button onclick="exportarExcelActualizado()" title="Respaldo completo" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold px-2 py-2 rounded-lg border border-zinc-700 transition">
           💾 .XLSX
         </button>
 
-        <button onclick="limpiarMemoriaLocal()" title="Borrar caché" class="bg-zinc-900 hover:bg-red-950 text-zinc-400 hover:text-red-400 text-xs px-2.5 py-2 rounded-lg border border-zinc-800 transition">
+        <button onclick="limpiarMemoriaLocal()" title="Borrar caché" class="bg-zinc-900 hover:bg-red-950 text-zinc-400 hover:text-red-400 text-xs px-2 py-2 rounded-lg border border-zinc-800 transition">
           🗑️
         </button>
       </div>
@@ -621,7 +626,7 @@
     }
 
     function limpiarMemoriaLocal() {
-      if (!confirm("¿Borrar caché del navegador? Asegúrate de haber copiado tus ventas nuevas.")) return;
+      if (!confirm("¿Borrar caché del navegador? Asegúrate de haber guardado tus ventas nuevas.")) return;
       localStorage.removeItem(STORAGE_KEY);
       location.reload();
     }
@@ -991,9 +996,8 @@
       refrescarTodaLaUI();
     }
 
-    // NUEVA FUNCIÓN: Copiar ventas nuevas al portapapeles con formato Excel
+    // OPCIÓN 1: Copiar ventas nuevas al portapapeles
     function copiarVentasNuevasPortapapeles() {
-      // Tomamos por ejemplo las ventas del día de hoy o las últimas registradas
       const fechaHoy = document.getElementById("pos-fecha").value || new Date().toISOString().split("T")[0];
       const ventasHoy = appState.ventas.filter(v => v.fecha === fechaHoy);
 
@@ -1002,40 +1006,48 @@
         return;
       }
 
-      // Generar filas tabuladas (exactamente como columnas de Excel)
-      // Columnas: ID, Fecha, Lugar, Formato, Artista, Título, Dueño, Precio, Método, Envío, Com CLIP, Ingreso Neto, Com Dueño %, Ganancia Dueño, Ganancia Matón, Costo, Margen Bruto, Margen %, Status, Notas, Año
       const lineas = ventasHoy.map(v => [
-        v.id,
-        v.fecha,
-        v.lugar,
-        v.formato,
-        v.artista,
-        v.titulo,
-        v.dueno,
-        v.precio,
-        v.metodo,
-        v.envio || "",
-        v.comClip,
-        v.ingresoNeto,
-        v.comDuenoPct,
-        v.gananciaDueno,
-        v.gananciaMaton,
-        v.costoUnitario || "",
-        v.gananciaMaton,
-        v.precio > 0 ? +(v.gananciaMaton / v.precio).toFixed(4) : 0,
-        v.statusPago || "",
-        v.notas || "",
-        v.anio
-      ].join("\t")); // Separado por tabuladores para pegado perfecto en Sheets
+        v.id, v.fecha, v.lugar, v.formato, v.artista, v.titulo, v.dueno,
+        v.precio, v.metodo, v.envio || "", v.comClip, v.ingresoNeto,
+        v.comDuenoPct, v.gananciaDueno, v.gananciaMaton, v.costoUnitario || "",
+        v.gananciaMaton, v.precio > 0 ? +(v.gananciaMaton / v.precio).toFixed(4) : 0,
+        v.statusPago || "", v.notas || "", v.anio
+      ].join("\t"));
 
       const textoClipboard = lineas.join("\n");
 
       navigator.clipboard.writeText(textoClipboard).then(() => {
-        alert(`¡Listo! Se copiaron ${ventasHoy.length} ventas del día (${fechaHoy}) al portapapeles.\n\nVe a tu Google Sheets en el celular, selecciona la celda vacía al final de tu tabla y presiona "Pegar".`);
+        alert(`¡Listo! Se copiaron ${ventasHoy.length} ventas de hoy (${fechaHoy}) al portapapeles.\n\nPégalas al final de tu Google Sheets maestro.`);
       }).catch(err => {
-        console.error("Error al copiar:", err);
-        alert("No se pudo acceder al portapapeles. Usa el respaldo .XLSX si tu navegador bloquea el portapapeles.");
+        alert("El navegador bloqueó el portapapeles. Usa el botón '📥 Descargar Hoy'.");
       });
+    }
+
+    // OPCIÓN 2: Descargar Excel (.xlsx) exclusivamente con las ventas de hoy
+    function descargarExcelVentasHoy() {
+      const fechaHoy = document.getElementById("pos-fecha").value || new Date().toISOString().split("T")[0];
+      const ventasHoy = appState.ventas.filter(v => v.fecha === fechaHoy);
+
+      if (ventasHoy.length === 0) {
+        alert(`No hay ventas registradas con fecha de hoy (${fechaHoy}).`);
+        return;
+      }
+
+      const wb = XLSX.utils.book_new();
+      const headerVentas = [
+        ["ID", "Fecha", "Lugar", "Formato", "Artista", "Título", "Dueño", "Precio", "Método", "Envío", "Com CLIP", "Ingreso Neto", "Com Dueño %", "Ganancia Dueño", "Ganancia Matón", "Costo", "Margen Bruto", "Margen %", "Status", "Notas", "Año"]
+      ];
+      const filasVentas = ventasHoy.map(v => [
+        v.id, v.fecha, v.lugar, v.formato, v.artista, v.titulo, v.dueno,
+        v.precio, v.metodo, v.envio || "", v.comClip, v.ingresoNeto,
+        v.comDuenoPct, v.gananciaDueno, v.gananciaMaton, v.costoUnitario || "",
+        v.gananciaMaton, v.precio > 0 ? +(v.gananciaMaton / v.precio).toFixed(4) : 0,
+        v.statusPago || "", v.notas || "", v.anio
+      ]);
+
+      const ws = XLSX.utils.aoa_to_sheet([...headerVentas, ...filasVentas]);
+      XLSX.utils.book_append_sheet(wb, ws, "Ventas_Hoy");
+      XLSX.writeFile(wb, `Ventas_Maton_${fechaHoy}.xlsx`);
     }
 
     function refrescarTodaLaUI() {
@@ -1390,7 +1402,6 @@
     }
 
     function exportarExcelActualizado() {
-      // Respaldo completo opcional por si acaso
       const wb = XLSX.utils.book_new();
       const filasVentas = [
         ["ID", "Fecha", "Lugar", "Formato", "Artista", "Título", "Dueño", "Precio", "Método", "Envío", "Com CLIP", "Ingreso Neto", "Com Dueño %", "Ganancia Dueño", "Ganancia Matón", "Costo", "Margen Bruto", "Margen %", "Status", "Notas", "Año"],
